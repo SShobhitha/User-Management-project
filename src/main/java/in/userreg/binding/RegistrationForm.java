@@ -1,7 +1,6 @@
 package in.userreg.binding;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 import lombok.Data;
 

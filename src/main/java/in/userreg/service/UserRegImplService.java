@@ -5,13 +5,9 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.stereotype.Service;
 
 import in.userreg.binding.LoginForm;
@@ -48,8 +44,7 @@ public class UserRegImplService implements UserRegService {
 	@Override
 	public Map<Long, String> getCountry() {
 		List<CountryEntity> countrylist = countryRepo.findAll();
-		Map<Long, String> map=countrylist.stream().collect(Collectors.toMap(CountryEntity::getCountryId,CountryEntity::getCountryName));
-		return map;
+		return countrylist.stream().collect(Collectors.toMap(CountryEntity::getCountryId,CountryEntity::getCountryName));
 	}
 
 	@Override
@@ -147,9 +142,8 @@ public class UserRegImplService implements UserRegService {
 	}
 	private String readMailBodyContent(String filename, UserRegEntity entity) {
 		String mailBody="";
-		try {
+		try(BufferedReader br= new BufferedReader(new FileReader(filename))) {
 		StringBuilder sb= new StringBuilder();
-		BufferedReader br= new BufferedReader(new FileReader(filename));
 		String line=br.readLine();
 		 
 		while(line!=null) {
@@ -160,7 +154,7 @@ public class UserRegImplService implements UserRegService {
 			mailBody=mailBody.replace("{FIRST_NAME}", entity.getFirstName());
 			mailBody=mailBody.replace("{LAST_NAME}", entity.getLastName());
 			mailBody=mailBody.replace("{PASSWORD}", entity.getPazzword());
-			br.close();
+			
 		}	
 	catch(Exception e){
 		e.printStackTrace();
